@@ -2,8 +2,8 @@
 
 ASCII conversion pull out of the ASCII-generator :https://github.com/uvipen/ASCII-generator
 
-#Requirements
+##Requirements
 
--cv2  \n
--PIL \n
--numpy
+* cv2
+* PIL
+* numpy

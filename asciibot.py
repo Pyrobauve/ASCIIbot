@@ -5,12 +5,13 @@ from PIL import Image, ImageFont, ImageDraw, ImageOps
 import discord
 from discord.ext import commands
 import os
+import config
 
-TOKEN = 'NzczOTUzODc2ODQzNTYwOTkw.X6Qutw.gxOPsbVy2MBwau-I1Y2GO1o5m2k'
+TOKEN = config.TOKEN
 
 bot = commands.Bot(command_prefix='a/', description='Test')
 
-path = '/home/pi/asciibot/'
+path = config.PATH
 bot.remove_command('help')
 
 def get_args():

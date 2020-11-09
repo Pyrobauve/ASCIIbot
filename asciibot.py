@@ -8,24 +8,12 @@ import os
 import config
 
 TOKEN = config.TOKEN
+bot = commands.Bot(command_prefix='a/')
 
-bot = commands.Bot(command_prefix='a/', description='Test')
-
+dir = "data"
 path = config.PATH
-bot.remove_command('help')
 
-def get_args():
-    parser = argparse.ArgumentParser("Image to ASCII")
-    parser.add_argument("--input", type=str, default="data/input.jpg", help="Path to input image")
-    parser.add_argument("--output", type=str, default="data/output.jpg", help="Path to output text file")
-    parser.add_argument("--mode", type=str, default="simple", choices=["simple", "complex"],
-                        help="10 or 70 different characters")
-    parser.add_argument("--background", type=str, default="white", choices=["black", "white"],
-                        help="background's color")
-    parser.add_argument("--num_cols", type=int, default=200, help="number of character for output's width")
-    parser.add_argument("--scale", type=int, default=2, help="upsize output")
-    args = parser.parse_args()
-    return args
+bot.remove_command('help')
 
 @bot.event
 async def on_ready():
@@ -43,14 +31,29 @@ async def help(ctx):
 
 @bot.command()
 async def ascii(ctx):
+    dir = ctx.author.id
+    
+    def get_args():
+        parser = argparse.ArgumentParser("Image to ASCII")
+        parser.add_argument("--input", type=str, default=f"{dir}/input.jpg", help="Path to input image")
+        parser.add_argument("--output", type=str, default=f"{dir}/output.jpg", help="Path to output text file")
+        parser.add_argument("--mode", type=str, default="simple", choices=["simple", "complex"],
+            help="10 or 70 different characters")
+        parser.add_argument("--background", type=str, default="white", choices=["black", "white"],
+            help="background's color")
+        parser.add_argument("--num_cols", type=int, default=200, help="number of character for output's width")
+        parser.add_argument("--scale", type=int, default=2, help="upsize output")
+        args = parser.parse_args()
+        return args
+        
     async with ctx.typing():
         if ctx.message.attachments:
             files = []
+            os.system(f"mkdir {dir}")
             for i in ctx.message.attachments:
                 files.append(i)
-                await i.save(f"{path}data/{i.filename}")
-                await ctx.send("Convertion en cours ...", delete_after=1)
-            os.system(f'mv {path}data/{i.filename} {path}data/input.jpg')
+                await i.save(f"{path}{dir}/{i.filename}")
+            os.system(f'mv {path}{dir}/{i.filename} {path}{dir}/input.jpg')
 
             def main(opt):
                 if opt.mode == "simple":
@@ -61,7 +64,7 @@ async def ascii(ctx):
                    bg_code = 255
                 else:
                    bg_code = 0
-                font = ImageFont.truetype("{path}fonts/DejaVuSansMono-Bold.ttf", size=10 * opt.scale)
+                font = ImageFont.truetype(f"{path}fonts/DejaVuSansMono-Bold.ttf", size=10 * opt.scale)
                 num_chars = len(CHAR_LIST)
                 num_cols = opt.num_cols
                 image = cv2.imread(opt.input)
@@ -100,10 +103,10 @@ async def ascii(ctx):
             if __name__ == '__main__':
               opt = get_args()
               main(opt)
-            await ctx.message.channel.send(file=discord.File(f"{path}data/output.jpg"))
-            os.remove(f'{path}data/output.jpg')
-
-        os.remove(f'{path}data/input.jpg')
+            os.system(f"mv {path}{dir}/output.jpg {path}{dir}/{i.filename}")
+            await ctx.message.channel.send(file=discord.File(f"{path}{dir}/{i.filename}"))
+            os.system(f'rm -r {dir}')
+            
         await ctx.message.delete(delay=None)
 
 bot.run(TOKEN)

@@ -7,13 +7,12 @@ from discord.ext import commands
 import os
 import config
 
-TOKEN = config.TOKEN
 bot = commands.Bot(command_prefix='a/')
+bot.remove_command('help')
 
+TOKEN = config.TOKEN
 dir = "data"
 path = config.PATH
-
-bot.remove_command('help')
 
 @bot.event
 async def on_ready():
@@ -23,15 +22,16 @@ async def on_ready():
     print('------')
     await bot.change_presence(activity=discord.Watching(name='ASCII Art | a/help'))
 
+
 @bot.command()
-async def help(ctx):
+async def help(ctx): #help command to check the command
     await ctx.message.delete(delay=None)
     await ctx.send("The command is: \n \n a/ascii --> Send an image by adding a comment.", delete_after=15)
     print(ctx.author.id)
 
 @bot.command()
-async def ascii(ctx):
-    dir = ctx.author.id
+async def ascii(ctx): #ascii command to convert an image
+    dir = ctx.author.id 
     
     def get_args():
         parser = argparse.ArgumentParser("Image to ASCII")
@@ -45,7 +45,8 @@ async def ascii(ctx):
         parser.add_argument("--scale", type=int, default=2, help="upsize output")
         args = parser.parse_args()
         return args
-        
+
+#Create the user folder and download the image   
     if ctx.message.attachments:
         async with ctx.typing():
             files = []
@@ -55,6 +56,7 @@ async def ascii(ctx):
                 await i.save(f"{path}{dir}/{i.filename}")
             os.system(f'mv {path}{dir}/{i.filename} {path}{dir}/input.jpg')
 
+#ASCII conversion on user folder
             def main(opt):
                 if opt.mode == "simple":
                     CHAR_LIST = '@%#*+=-:. '
@@ -102,6 +104,8 @@ async def ascii(ctx):
             if __name__ == '__main__':
                 opt = get_args()
                 main(opt)
+            
+#Send of the ASCII image, deletion of the user folder and its contents 
             os.system(f"mv {path}{dir}/output.jpg {path}{dir}/{i.filename}")
             await ctx.message.channel.send(file=discord.File(f"{path}{dir}/{i.filename}"))
             os.system(f'rm -r {dir}')

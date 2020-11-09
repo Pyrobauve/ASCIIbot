@@ -1,6 +1,6 @@
 # ASCIIbot
 
-This bot convert the picture send in an Art ASCII picture.  
+This bot convert the image send in an Art ASCII image.  
 the default command is ```a/```
 
 ### Requirements

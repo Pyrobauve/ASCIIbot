@@ -21,12 +21,12 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-    await bot.change_presence(activity=discord.Game(name='convertir | a/help'))
+    await bot.change_presence(activity=discord.Watching(name='ASCII Art | a/help'))
 
 @bot.command()
 async def help(ctx):
     await ctx.message.delete(delay=None)
-    await ctx.send("La commande est: \n \n a/ascii --> envoyer une image en ajoutant un commantaire", delete_after=15)
+    await ctx.send("The command is: \n \n a/ascii --> Send an image by adding a comment.", delete_after=15)
     print(ctx.author.id)
 
 @bot.command()
@@ -46,8 +46,8 @@ async def ascii(ctx):
         args = parser.parse_args()
         return args
         
-    async with ctx.typing():
-        if ctx.message.attachments:
+    if ctx.message.attachments:
+        async with ctx.typing():
             files = []
             os.system(f"mkdir {dir}")
             for i in ctx.message.attachments:
@@ -57,13 +57,13 @@ async def ascii(ctx):
 
             def main(opt):
                 if opt.mode == "simple":
-                   CHAR_LIST = '@%#*+=-:. '
+                    CHAR_LIST = '@%#*+=-:. '
                 else:
-                   CHAR_LIST = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. "
+                    CHAR_LIST = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. "
                 if opt.background == "white":
-                   bg_code = 255
+                    bg_code = 255
                 else:
-                   bg_code = 0
+                    bg_code = 0
                 font = ImageFont.truetype(f"{path}fonts/DejaVuSansMono-Bold.ttf", size=10 * opt.scale)
                 num_chars = len(CHAR_LIST)
                 num_cols = opt.num_cols
@@ -74,11 +74,11 @@ async def ascii(ctx):
                 cell_height = 2 * cell_width
                 num_rows = int(height / cell_height)
                 if num_cols > width or num_rows > height:
-                   print("Too many columns or rows. Use default setting")
-                   cell_width = 6
-                   cell_height = 12
-                   num_cols = int(width / cell_width)
-                   num_rows = int(height / cell_height)
+                    print("Too many columns or rows. Use default setting")
+                    cell_width = 6
+                    cell_height = 12
+                    num_cols = int(width / cell_width)
+                    num_rows = int(height / cell_height)
                 char_width, char_height = font.getsize("A")
                 out_width = char_width * num_cols
                 out_height = 2 * char_height * num_rows
@@ -86,8 +86,8 @@ async def ascii(ctx):
                 draw = ImageDraw.Draw(out_image)
                 for i in range(num_rows):
                     line = "".join([CHAR_LIST[min(int(np.mean(image[int(i * cell_height):min(int((i + 1) * cell_height), height),
-                                                              int(j * cell_width):min(int((j + 1) * cell_width),
-                                                                                      width)]) * num_chars / 255), num_chars - 1)]
+                                                            int(j * cell_width):min(int((j + 1) * cell_width),
+                                                                                    width)]) * num_chars / 255), num_chars - 1)]
                                     for j in
                                     range(num_cols)]) + "\n"
                     draw.text((0, i * char_height), line, fill=255 - bg_code, font=font)
@@ -99,14 +99,16 @@ async def ascii(ctx):
                 out_image = out_image.crop(cropped_image)
                 out_image.save(opt.output)
 
-
             if __name__ == '__main__':
-              opt = get_args()
-              main(opt)
+                opt = get_args()
+                main(opt)
             os.system(f"mv {path}{dir}/output.jpg {path}{dir}/{i.filename}")
             await ctx.message.channel.send(file=discord.File(f"{path}{dir}/{i.filename}"))
             os.system(f'rm -r {dir}')
             
-        await ctx.message.delete(delay=None)
+    else:
+        await ctx.send("You must send an image with this command.",delete_after=5)
+    
+    await ctx.message.delete(delay=None)
 
 bot.run(TOKEN)

@@ -20,7 +20,7 @@ async def on_ready():
     print(bot.user.name)
     print(bot.user.id)
     print('------')
-    await bot.change_presence(activity=discord.Watching(name='ASCII Art | a/help'))
+    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name='ASCII Art | a/help'))
 
 
 @bot.command()

@@ -5,7 +5,5 @@ ASCII conversion pull out of the ASCII-generator :https://github.com/uvipen/ASCI
 #Requirements
 
 -cv2
-
 -PIL
-
 -numpy

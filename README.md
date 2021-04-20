@@ -1,6 +1,6 @@
 # ASCIIbot
 
-This bot convert the image send in an Art ASCII image.  
+This bot(discord) convert the image send in an Art ASCII image.  
 the default command is ```a/```   
 
 User send image with command:   
